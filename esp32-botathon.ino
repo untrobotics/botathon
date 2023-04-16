@@ -5,23 +5,13 @@
 #include "soc/rtc_cntl_reg.h"  //  disable brownout problems
 #include <WebSocketsClient.h>
 
-/*
-ESP32s
-Controllers
-Lighting
-Ref board
-Timer
-Wifi
-Sample robot code
- */
-
 WebSocketsClient webSocket;
 
 //const char* ssid = "UNT";
-const char* ssid = "UNT Robotics Botathon";
-const char* password = "wearerobotics";
+const char* ssid = "2WIRE123";
+const char* password = "SECRET";
 
-#define ONBOARD_LED 33
+#define ONBOARD_LED 2
 #define FLASH_LED 4
 
 int TEAM_NO = 100;
@@ -134,7 +124,7 @@ void setup() {
   //Serial.printf("IP_%s\n", WiFi.localIP().toString());
   Serial.println(WiFi.localIP());
 
-  webSocket.begin("untrobotics.com", 9111, "/", "team");
+  webSocket.begin("untrobotics.com", 81, "/", "team");
   webSocket.onEvent(webSocketEvent);
   webSocket.setReconnectInterval(5000);
 
@@ -178,9 +168,17 @@ void control(void * pvParameters) {
 
   while (1) {
     digitalWrite(ONBOARD_LED, HIGH);
-    delay(1000);
+    if (WiFi.status() != WL_CONNECTED) {
+      delay(100);
+    } else {
+      delay(2000);
+    }
     digitalWrite(ONBOARD_LED, LOW);
-    delay(1000);
+    if (WiFi.status() != WL_CONNECTED) {
+      delay(100);
+    } else {
+      delay(2000);
+    }
   }
 }
 
