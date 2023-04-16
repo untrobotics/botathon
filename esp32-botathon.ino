@@ -9,7 +9,7 @@ WebSocketsClient webSocket;
 
 //const char* ssid = "UNT";
 const char* ssid = "2WIRE123";
-const char* password = "SECRET";
+const char* password = "QGKWMVVJ";
 
 #define ONBOARD_LED 2
 #define FLASH_LED 4
@@ -43,9 +43,9 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t len) {
     {
       //Serial.printf("WEBSOCKET_RECEIVED_S: %s\n", payload);
       String command = String((char *)payload);
-      Serial.print("COMMAND: ");
+      //Serial.print("COMMAND: ");
+      //Serial.println(command);
       Serial.println(command);
-      Serial1.println(command);
 
       if (command == "FLASH_ON") {
         digitalWrite(FLASH_LED, HIGH);
@@ -58,7 +58,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t len) {
       break;
     }
     case WStype_BIN:
-      Serial.printf("WEBSOCKET_RECEIVED_B: %u\n", len);
+      //Serial.printf("WEBSOCKET_RECEIVED_B: %u\n", len);
       //hexdump(payload, length);
 
       // send data to server
