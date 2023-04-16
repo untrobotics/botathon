@@ -3,13 +3,13 @@
 StaticJsonDocument<200> doc;
 
 // Motor A connections
-int enA = 8; //9
-int in1 = 2; //8
-int in2 = 3; //7
+int enA = 9; //9
+int in1 = 8; //8
+int in2 = 7; //7
 // Motor B connections
-int enB = 9; //3
-int in3 = 4; //5
-int in4 = 5; //4
+int enB = 3; //3
+int in3 = 5; //5
+int in4 = 4; //4
 
 String incomingByte = "";
 
@@ -42,7 +42,7 @@ void setup() {
 bool A_BUTTON_PRESSED = false;
 
 void loop() {
-  //if (Serial.available() > 0) {
+  if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.readStringUntil('\n');
 
@@ -58,8 +58,8 @@ void loop() {
       return;
     }
 
-    String key = doc["input"]["key"];
-    float value = doc["input"]["value"].as<float>();
+    String key = doc["key"];
+    float value = doc["value"].as<float>();
     
     Serial.print("KEY:");
     Serial.print(key);
@@ -97,7 +97,7 @@ void loop() {
         stop_left();
       }
     }
-  //}
+  }
   
   //directionControl();
   //delay(1000);
