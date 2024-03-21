@@ -49,8 +49,8 @@ void setup() {
     Serial.println("WEBSOCKET_DISCONNECTED");
     client.terminate();
 
-    Serial.println("Attempting to reconnect...");
     while (!client.open(websocket_host, websocket_port, websocket_path, websocket_protocol)) {
+      Serial.println("Attempting to reconnect...");
       Serial.println(F("WebSocket connection failed!"));
       delay(2000);
     }
