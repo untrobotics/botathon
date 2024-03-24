@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include "Arduino.h"
-#define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI
-#include <WebSocketClient.h> // install mWebSockets library
+// BROKEN -> #define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI
+#include <WebSocketClient.h> // install mWebSockets library, and set #define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI in config.h
 using namespace net; // do not remove!
 
 #include "ArduinoGraphics.h" // install ArduinoGraphics library
