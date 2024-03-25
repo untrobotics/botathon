@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include "Arduino.h"
 // BROKEN -> #define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI
-#include <WebSocketClient.h> // install mWebSockets library, , and set #define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI in config.h
+#include <WebSocketClient.h> // install mWebSockets library, and set #define NETWORK_CONTROLLER NETWORK_CONTROLLER_WIFI in config.h
 using namespace net; // do not remove!
 
 #include "ArduinoGraphics.h" // install ArduinoGraphics library
@@ -68,7 +68,7 @@ void displayConnected() {
   matrix.textScrollSpeed(50);
 
   // add the text
-  const char text[] = "WiFi Connected";
+  const char text[] = "     WiFi Connected";
   matrix.textFont(Font_5x7);
   matrix.beginText(0, 1, 0xFFFFFF);
   matrix.println(text);
