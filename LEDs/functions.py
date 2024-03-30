@@ -100,8 +100,9 @@ def Countdown_Normal(pipe: multiprocessing.connection):
     if YELLOWSWITCH == 1:
         start = time.time()
         offset = 0.0
-        for x in range(pxlCnt):
+        for x in range(int(pxlCnt >> 1)):
             pixels[x] = (COLOR_LOWTIME)
+            pixels[pxlCnt-1-x] = (COLOR_LOWTIME)
             pixels.show()
             # checking this every loop because the lights don't update immediately (there's like a .5 second delay or something
             if pipe.poll():
@@ -182,10 +183,6 @@ def at_exit():
         process.terminate()
     print("t")
 
-
-# bad naming, I know
-# this is the input process that's active for the duration of the timer
-# please give this pipeFront, and CountdownTimer() pipeBack
 def TimerInput(timerProcess: multiprocessing.Process, pipe: multiprocessing.connection):
     while timerProcess.is_alive():
         msg = input("Enter one of the following to edit the current timer:\n"

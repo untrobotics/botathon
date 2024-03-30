@@ -4,7 +4,7 @@ import neopixel
 
 boardNum = board.D18
 
-configFilePath = "/home/pi/Documents/led.cfg"
+configFilePath = "/home/pi/led.cfg"
 
 # edit the config file to do this stuff
 config = configparser.ConfigParser()
