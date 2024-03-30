@@ -47,6 +47,8 @@ int enD = 2;
 int in7 = 3;
 int in8 = 4;
 
+bool A_BUTTON_PRESSED = false;
+
 void displayTeamNumber() {
   matrix.beginDraw();
   matrix.stroke(0xFFFFFFFF);
@@ -77,7 +79,16 @@ void displayConnected() {
   matrix.endDraw();
 }
 
-bool getJSON(WebSocket &ws, String message);
+bool getJSON(WebSocket &ws, String message) {
+  String command = String(message);
+  if ((deserializeJson(doc, command))) {
+    Serial.println("Error parsing message");
+    return false;
+  }
+  //Serial.println("Deserialized");
+
+  return true;
+}
 
 void motorSetUp() {
   pinMode(enA, OUTPUT);
@@ -106,45 +117,50 @@ void motorSetUp() {
   digitalWrite(in7, LOW);
   digitalWrite(in8, LOW);
 
+  // set all motors to run at maximum speed, when spinning
   analogWrite(enA, 255);
   analogWrite(enB, 255);
   analogWrite(enC, 255);
   analogWrite(enD, 255);
 
-  Serial.println("Started");
+  Serial.println("Motors have been initialised");
 }
-bool A_BUTTON_PRESSED = false;
+
 void control() {
   String key = doc["key"];
   bool value = doc["value"];
+
+  Serial.print("Button Pressed:");
   Serial.println(key);
+  Serial.print("Button State:");
   Serial.println(value);
+
   if (key == "A_BUTTON") {
     if (value == true) {
       A_BUTTON_PRESSED = !A_BUTTON_PRESSED;
-      Serial.print("Direction switched:");
+      Serial.print("Direction (true = backwards, false = forwards): ");
       Serial.println(A_BUTTON_PRESSED);
     }
   } else if (key == "B_BUTTON")
-    stop();
+    stop_all_wheels();
   else if (key == "RIGHT_BUMPER") {
     if (value == true) {
       if (A_BUTTON_PRESSED) {
-        right_forwards();
+        right_wheels_forwards();
       } else {
-        right_backwards();
+        right_wheels_backwards();
       }
     } else
-      stop_right();
+      stop_right_wheels();
   } else if (key == "LEFT_BUMPER") {
     if (value == true) {
       if (A_BUTTON_PRESSED) {
-        left_forwards();
+        left_wheels_forwards();
       } else {
-        left_backwards();
+        left_wheels_backwards();
       }
     } else
-      stop_left();
+      stop_left_wheels();
   }
 }
 
@@ -185,6 +201,7 @@ void setup() {
     // indicate connected status
     digitalWrite(status_indicator_pin, HIGH);
   });
+
   client.onClose([](WebSocket &ws, const WebSocket::CloseCode code,
                     const char *reason, uint16_t length) {
     // indicate disconnected status
@@ -207,13 +224,18 @@ void setup() {
       delay(2000);
     }
   });
+
   client.onMessage([](WebSocket &ws, const WebSocket::DataType dataType,
                       const char *message, uint16_t length) {
     Serial.print("WEBSOCKET_MESSAGE_RECEIVED: ");
     Serial.println(message);
+
+    // decode the message from the websocket and store it
     if (getJSON(ws, message) == false) {
       return;
     }
+
+    // use the stored message to control the motors
     control();
   });
 
@@ -225,61 +247,51 @@ void setup() {
 }
 
 void loop() {
-  // nowt
+  // listen for incoming websocket messages
   client.listen();
 }
-bool getJSON(WebSocket &ws, String message) {
-  String command = String(message);
-  if ((deserializeJson(doc, command))) {
-    Serial.println("Error parsing message");
-    return false;
-  }
-  Serial.println("Deserialized");
 
-  return true;
-}
-
-void left_forwards() {
+void left_wheels_forwards() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
   digitalWrite(in5, LOW);
   digitalWrite(in6, HIGH);
 }
-void right_forwards() {
+void right_wheels_forwards() {
   digitalWrite(in7, LOW);
   digitalWrite(in8, HIGH);
 
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 }
-void left_backwards() {
+void left_wheels_backwards() {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in5, HIGH);
   digitalWrite(in6, LOW);
 }
-void right_backwards() {
+void right_wheels_backwards() {
   digitalWrite(in7, HIGH);
   digitalWrite(in8, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 }
-void stop_left() {
+void stop_left_wheels() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in5, LOW);
   digitalWrite(in6, LOW);
 }
 
-void stop_right() {
+void stop_right_wheels() {
   digitalWrite(in7, LOW);
   digitalWrite(in8, LOW);
 
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 }
-void stop() {
+void stop_all_wheels() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
