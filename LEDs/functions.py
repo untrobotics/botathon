@@ -93,7 +93,10 @@ def Countdown_Normal(pipe: multiprocessing.connection):
                 ResumePlay(pipe)
             elif msg[:1] == "g":
                 Goal()
-                ResumePlay(pipe)
+                msg = ResumePlay(pipe)
+                if msg == 'y':
+                    totalSeconds = -1
+                    break
             else:
                 print("\nNot a valid input.\n")
             pipe.send("start up b")
@@ -166,7 +169,9 @@ def Countdown_Normal(pipe: multiprocessing.connection):
                 ResumePlay(pipe, prevColor=(COLOR_TIMER if YELLOWSWITCH == 0 else COLOR_LOWTIME))
             elif msg[:1] == "g":
                 Goal()
-                ResumePlay(pipe, prevColor=(COLOR_TIMER if YELLOWSWITCH == 0 else COLOR_LOWTIME))
+                msg = ResumePlay(pipe, prevColor=(COLOR_TIMER if YELLOWSWITCH == 0 else COLOR_LOWTIME))
+                if msg == 'y':
+                    break
             else:
                 print("\nNot a valid input.\n")
             pipe.send("start up")
@@ -193,9 +198,13 @@ def TimerInput(timerProcess: multiprocessing.Process, pipe: multiprocessing.conn
         pipe.send(msg)
         # sleep for 1.1 seconds to ensure that the other process receives the input instead of this one
         time.sleep(.2)
-        if msg[:1] == 'p' or msg[:1] == 'g':
+        if msg[:1] == 'p':
             # pause or goal scored
             secmsg = input("Press enter to continue...\n")
+            pipe.send(secmsg)
+        elif msg[:1] == 'g':
+            input("Press enter to continue...\n")
+            secmsg = input('End match (y/n)?')
             pipe.send(secmsg)
         # i know this prevents rapid pausing and unpausing... but i don't have a good way to test this rn
         # wait for the process to restart or whatever you want to call it
@@ -254,7 +263,10 @@ def SuddenDeath(pipe: multiprocessing.connection):
 
 
 def ResumePlay(pipe: multiprocessing.connection, prevColor=COLOR_TIMER):
-    pipe.recv()
+    msg = pipe.recv()
+    #todo e
+    if msg == 'y':
+        return 'y'
     pixels.fill((0, 0, 0))
     pixels.brightness = 1.0
     pixels.show()
@@ -262,6 +274,7 @@ def ResumePlay(pipe: multiprocessing.connection, prevColor=COLOR_TIMER):
     StartDelayCount()
     pixels.fill(prevColor)
     pixels.show()
+    return msg
 
 
 def SwapColors(pipe: multiprocessing.connection, colorOne: (int, int, int), colorTwo: (int, int, int)):
