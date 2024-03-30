@@ -13,12 +13,12 @@ def StartDelayCount():
         pixels[pxlCnt - 1 - x] = (255, 255, 255)
     pixels.show()
     time.sleep(1)
-    for x in range(fraction, fraction >> 2):
+    for x in range(fraction, fraction << 1):
         pixels[x] = (255, 255, 255)
         pixels[pxlCnt - 1 - x] = (255, 255, 255)
     pixels.show()
     time.sleep(1)
-    for x in range(fraction >> 2, (fraction >> 2) + fraction):
+    for x in range(fraction << 1, (fraction << 1) + fraction):
         pixels[x] = (255, 255, 255)
         pixels[pxlCnt - 1 - x] = (255, 255, 255)
     pixels.show()
