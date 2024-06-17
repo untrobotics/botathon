@@ -24,4 +24,4 @@ enum class Inputs{  // doesn't include triggers because triggers are similar to 
   DPadRight           = 32768,  //Bit 16
 };
 
-bool buttonPressed(BLEUnsignedIntCharacteristic c,Inputs input) {return (int) input & c.value() == (int) input;}
+bool buttonPressed(unsigned int c,Inputs input) {return (int) input & c == (int) input;}
