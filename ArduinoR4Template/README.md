@@ -41,3 +41,6 @@ buttonPressed(controlCharacteristic.value, (Inputs) 1);
 # To-do
 * Add a dictionary or macro so users don't have to use enum
 * Add basic motor control
+
+# Bugs
+* Windows requires pairing to use BLE. Current code will not run otherwise.
