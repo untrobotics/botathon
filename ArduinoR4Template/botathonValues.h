@@ -2,7 +2,14 @@
 #define CHARACTERISTIC_ID "19B10011-E8F2-537E-4F6C-D104768A1214"
 #define BAUD_RATE 115200
 
-ArduinoLEDMatrix matrix;
+// change team name as needed
+#define TEAM_NAME "BotathonTeam23"
+#define TEAM_NO   23  //used for the LED matrix
+// change service ID to be unique
+#define SERVICE_ID "1ae49b08-b750-4ef7-afd8-5395763c0da6"
+
+// uncomment to have the LED matrix show debugging messages
+// #define DEBUG_MATRIX
 
 enum class Inputs{  // doesn't include triggers because triggers are similar to joysticks
   AButton             = 1,      //Bit 1
@@ -24,4 +31,4 @@ enum class Inputs{  // doesn't include triggers because triggers are similar to 
   DPadRight           = 32768,  //Bit 16
 };
 
-bool buttonPressed(unsigned int c,Inputs input) {return (int) input & c == (int) input;}
+bool buttonPressed(unsigned int c,Inputs input);
