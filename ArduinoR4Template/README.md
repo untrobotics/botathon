@@ -2,7 +2,7 @@
 
 # Installation
 
-Ensure  `botathonValues.h` is in the same Sketchbook directory as `main.ino`.
+Ensure all of the files in this folder are in the same Sketchbook directory as `BotathonArduinoBLE.ino`.
 
 Ensure the following libraries are installed in Arduino IDE:
 * ArduinoBLE (by Arduino)
@@ -12,7 +12,7 @@ Ensure the following libraries are installed in Arduino IDE:
 
 Add your code between lines *insert line numbers here* in `main.ino`. 
 
-If you don't want the LED matrix on the Arduino to show debug messages, comment out line 6, where it says ``#define DEBUG_MATRIX``.
+If you don't want the LED matrix on the Arduino to show debug messages, comment out line 12 in `botathonValues.h`, where it says ``#define DEBUG_MATRIX``.
 
 ## Getting controller button states
 
