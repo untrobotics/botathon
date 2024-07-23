@@ -1,115 +1,97 @@
-import asyncio
-from bleak import BleakScanner, BleakClient
-import pygame
-async def main():
-    device = None
-    while device == None:
-        print("Scanning for 5 seconds...\n")
-        devices = await BleakScanner.discover()
-        print("Scan complete.")
-        for d in devices:
-            if d.name == 'BotathonTeam23':
-                print('exiting scan')
-                device = d
+import ctypes
+import simplepyble
+from simplepyble import Peripheral
+from sdl2 import SDL_Event, SDL_PollEvent, SDL_JoystickOpen, SDL_Init, SDL_INIT_JOYSTICK, SDL_INIT_EVENTS, SDL_INIT_VIDEO
+from time import sleep
+
+SERVICE_UUID = '1ae49b08-b750-4ef7-afd8-5395763c0da6'
+CHARACTERISTIC_UUID = '19b10011-e8f2-537e-4f6c-d104768a1214'
+
+def get_adapter():
+    adapters = simplepyble.Adapter.get_adapters()
+
+    if len(adapters) == 0:
+        print("No adapters found")
+        return
+
+    if len(adapters) == 1:
+        adapter = adapters[0]
+    else:
+        # Query the user to pick an adapter
+        print("Please select an adapter:")
+        for i, adapter in enumerate(adapters):
+            print(f"{i}: {adapter.identifier()} [{adapter.address()}]")
+
+        choice = int(input("Enter choice: "))
+        adapter = adapters[choice]
+
+    adapter.set_callback_on_scan_start(lambda: print("Scanning for bluetooth devices."))
+    adapter.set_callback_on_scan_stop(lambda: print("Scan complete."))
+    adapter.set_callback_on_scan_found(
+        lambda peripheral: print(f"Found {peripheral.identifier()} [{peripheral.address()}]"))
+    return adapter
+
+
+def get_peripheral(adapter, identifier) -> Peripheral:
+    peripheral = None
+    while True:
+        # Scan for 5 seconds
+        adapter.scan_for(5000)
+        peripherals = adapter.scan_get_results()
+        # # Query the user to pick a peripheral
+        # print("Please select a peripheral:")
+        # for i, peripheral in enumerate(peripherals):
+        #     print(f"{i}: {peripheral.identifier()} [{peripheral.address()}]")
+        #
+        # choice = int(input("Enter choice or -1 to scan again: "))
+        # if choice == -1:
+        #     continue
+        # peripheral = peripherals[choice]
+        for p in peripherals:
+            if p.identifier() == identifier:
+                peripheral = p
                 break
-        if device == None:
-            print("Device not found.\n")
-    print("Device found")
+        if peripheral is not None:
+            break
 
-    async with BleakClient(device) as client:
-        while True:
-            event = pygame.event.wait()
-            event_type = event.type
-            value = await client.read_gatt_char("19B10011-E8F2-537E-4F6C-D104768A1214")
+    print(f"Connecting to: {peripheral.identifier()} [{peripheral.address()}]")
+    peripheral.connect()
+    return peripheral
 
-            if event_type == pygame.QUIT:   # supposedly handles SIGINT
-                break
-            if event_type >= 1536 or event_type <= 1540:
-                key = ""
-                if event_type == 1536:  # Input is an axis
-                    # key = axisToString[eventDict['axis']]
-                    # value = eventDict['value']
-                    continue
-                elif event_type == 1537:
-                    continue
-                elif event_type == 1538:  # Input is D-Pad
-                    # value = {'x': event.value[0], 'y': event.value[1]}
-                    set_bits = 0
-                    if event.value[0] == 1:
-                        set_bits = 128  # 1000 0000
-                    elif event.value[0] == -1:
-                        set_bits = 64   # 0100 0000
-                    if event.value[1] == 1:
-                        set_bits |= 16  # 0001 0000
-                    elif event.value[1] == -1:
-                        set_bits |= 32  # 0010 0000
-                    value[1] = (value[1] & 0b00001111   # value[1] & 15
-                                ) | set_bits   # resets bits 5-8 and then sets them
-                    print(set_bits)
-                else:  # Input is a button
-                    # key = buttonToString[eventDict['button']]
-                    # value = event_type == 1539
-                    button = event.button
-                    byte_index = int(button > 7)
-                    if byte_index:
-                        button -= 8
-                    set_bit = (1 << button)
-                    value[byte_index] = (value[byte_index] & (~set_bit))    # reset bitmask
-                    if event_type == 1539:  # if the button is down, set bitmask
-                        value[byte_index] |= set_bit
-                    print(button,byte_index,set_bit)
 
-                print(event)
-                # List of event types (as far as I'm aware, this numbering is constant)
-                # Axes input:    1536
-                # Button Down:   1539        True
-                # Button Up:     1540        False
-                # D-Pad:         1538
-                # there's also the gamepad being connected and mic/headphones (but no one cares about that)
+team_number = input("Enter your team number: ")
+adapter = get_adapter()
+peripheral = get_peripheral(adapter, f"BotathonTeam{team_number}")
 
-                # list of buttons/axes and their corresponding xbox input:
-                # NOTE: D-Pad comes with a value in an ordered pair representing x,y
-                # Axes 1,0:  Left joystick, x,y
-                # Axes 3,2:  Right joystick, x,y
-                # Axis 4:    Left Trigger, positive is pushed in
-                # Axis 5:    Right Trigger, same as Axis 4 (Left Trigger)
+SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS | SDL_INIT_VIDEO)
 
-                # Button 0:  A Button
-                # Button 1:  B Button
-                # Button 2:  X Button
-                # Button 3:  Y Button
-                # Button 4:  Left Bumper
-                # Button 5:  Right Bumper
+while True:
+    # print("Wait for event...")
+    event = SDL_Event()
+    while SDL_PollEvent(ctypes.byref(event)):
+        event_type = event.type
+        old_value = int.from_bytes(peripheral.read(SERVICE_UUID, CHARACTERISTIC_UUID), "little")
+        new_value = old_value
+        if event_type == 1541:
+            SDL_JoystickOpen(0)
+        elif event_type == 1538:  # Input is D-Pad
+            set_bits = event.jbutton.state << 12
+            new_value = (new_value & 0b0000111111111111  # value & 4095 (b10)... resets the d-pad bits
+                     ) | set_bits  # sets d-pad bits
+            # print(set_bits)
+        elif event_type == 1539 or event_type == 1540:  # Input is button up/down
+            button = event.jbutton.button
+            # the bitmask has been aligned with pygame button numbering,
+            # so bit 1 = button 0, bit 2 = button 1, and so on
+            set_bit = (1 << button)
+            new_value &= (~set_bit)  # resets bit flag for button
+            if event_type == 1539:  # if the button is down, set bitmask
+                new_value |= set_bit
+        else:
+            # print(event)
+            continue
+        if new_value != old_value:
+            peripheral.write_request(SERVICE_UUID, CHARACTERISTIC_UUID, new_value.to_bytes(2,"little"))
 
-                # The three center buttons (excluding the xbox)
-                # Button 6:  Left center Button
-                # Button 7:  Right Center Button
-                # Button 11: Center Center Button
 
-                # Button 8:  Left Joystick Button
-                # Button 9:  Right Joystick Button
-                # Button 10: XBox Button
-                print("Input successfully sent.")
-            else:
-                print(event)
 
-joysticks = []
-doStuff = True
-
-pygame.init()
-print("Initializing controllers...")
-joystickCount = pygame.joystick.get_count()
-for i in range(0, joystickCount):
-    joysticks.append(pygame.joystick.Joystick(i))
-    joysticks[-1].init()
-print(f"Initialized {joystickCount} controllers.")
-try:
-    from bleak.backends.winrt.util import allow_sta
-    # tell Bleak we are using a graphical user interface that has been properly
-    # configured to work with asyncio
-    allow_sta()
-except ImportError:
-    # other OSes and older versions of Bleak will raise ImportError which we
-    # can safely ignore
-    pass
-asyncio.run(main())

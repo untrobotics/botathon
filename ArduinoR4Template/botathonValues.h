@@ -26,9 +26,9 @@ enum class Inputs{  // doesn't include triggers because triggers are similar to 
   XBoxButton          = 1024,   //Bit 11
   CenterCenterButton  = 2048,   //Bit 12
   DPadUp              = 4096,   //Bit 13
-  DpadDown            = 8192,   //Bit 14
-  DPadLeft            = 16384,  //Bit 15
-  DPadRight           = 32768,  //Bit 16
+  DPadRight            = 8192,   //Bit 14
+  DPadDown            = 16384,  //Bit 15
+  DPadLeft           = 32768,  //Bit 16
 };
 
 bool buttonPressed(unsigned int c,Inputs input);

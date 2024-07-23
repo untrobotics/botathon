@@ -25,6 +25,7 @@ void setup() {
   startPairing();
   matrix.println(TEAM_NO);
   matrix.endText();
+  controlCharacteristic.writeValue(25);
 }
 unsigned int previousValue = 0;
 void loop() {
@@ -39,16 +40,10 @@ void loop() {
     startPairing();
     return;
   }
+
   if(controlCharacteristic.written()){
     unsigned int currentValue = controlCharacteristic.value();
-    if(previousValue == currentValue) {
-      Serial.println("No change");
-      return;}
-    Serial.println(currentValue);
-
-    if(buttonPressed(currentValue,(Inputs) 1)){
-      Serial.println("test");
-    }
+    // insert your code here
 
     previousValue = currentValue;
   }
