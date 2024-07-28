@@ -2,7 +2,8 @@
 * python 3+
 * [SimpleBLE](https://github.com/OpenBluetoothToolbox/SimpleBLE)
 * [SDL2](https://wiki.libsdl.org/SDL2/Installation) and [PySDL2](https://github.com/py-sdl/py-sdl2/tree/master)
-  * *Ensure the SDL2 dll is in the same directory as the script*
+  * *You can also use the PySDL2-dll package instead of installing/compiling SDL2 yourself*
+  * *If you're not using PySDL2-dll, you may need to set an environment variable `PYSDL2_DLL_PATH` to the directory holding the SDL2 dll (or equivalent).*
 # Usage
 
 Name the peripheral "BotathonTeam{number}" (where {number} is anything) and begin broadcasting.
@@ -14,11 +15,10 @@ The program expects a characteristic with the ID "19B10011-E8F2-537E-4F6C-D10476
 Please connect an Xbox controller to the computer to use.
 
 # Platforms
-* Windows 11
+* Windows 10/11
 
 # To-do
-* Test Windows 10
-* Test MacOS
+* Test MacOS (10.15+ because SimpleBLE does not support versions earlier than Catalina)
 
 # Quick SDL2 run-down
 The event types used in this script are
