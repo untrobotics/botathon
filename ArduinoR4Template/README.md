@@ -10,9 +10,9 @@ Ensure the following libraries are installed in Arduino IDE:
 
 # Usage
 
-Add your code between lines *insert line numbers here* in `main.ino`. 
+Add your code between lines 89 and 100 in `BotathonArduinoBLE.ino`. 
 
-If you don't want the LED matrix on the Arduino to show debug messages, comment out line 12 in `botathonValues.h`, where it says ``#define DEBUG_MATRIX``.
+If you don't want the LED matrix on the Arduino to show debug messages, comment out line 9 in `botathonValues.h`, where it says ``#define DEBUG_MATRIX``.
 
 ## Getting controller button states
 
@@ -26,7 +26,7 @@ The function will return `true` if all `Inputs` passed in parameter 2 are presse
 
 Assuming the A button is pressed down,
 
-```c++
+```cpp
 buttonPressed(controlCharacteristic.value, Inputs::AButton);
 ```
 
@@ -34,13 +34,12 @@ will return `true`.
 
 An equivalent function call is
 
-```c++
+```cpp
 buttonPressed(controlCharacteristic.value, (Inputs) 1);
 ```
 
-# To-do
-* Add a dictionary or macro so users don't have to use enum
-* Add basic motor control
-
-# Bugs
-* Windows requires pairing to use BLE. Current code will not run otherwise.
+If you want to see if multiple buttons are pressed down,
+```cpp
+buttonPressed(controlCharacteristic.value,Inputs::AButton | Inputs::BButton);
+```
+this code will only return `true` if both the A and B buttons are pressed down. This is not equivalent to separately checking if the A 
