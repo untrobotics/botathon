@@ -77,9 +77,8 @@ adapter = get_adapter()
 peripheral = get_peripheral(adapter, f"BotathonTeam{team_number}")
 print("Initializing SDL2")
 SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_EVENTS | SDL_INIT_VIDEO)
-print("SDL2 initialized")
+print("SDL2 initialized. Waiting for controller input...")
 while True:
-    print("Waiting for controller input...")
     event = SDL_Event()
     while SDL_PollEvent(ctypes.byref(event)):
         event_type = event.type
@@ -95,7 +94,8 @@ while True:
             # print(set_bits)
         elif event_type == 1539 or event_type == 1540:  # Input is button up/down
             button = event.jbutton.button
-            print(f"{button_to_str[button]} {" down" if event_type == 1539 else " up"}")
+            direction = " down" if event_type == 1539 else " up"
+            print(f"{button_to_str[button]} {direction}")
             # the bitmask has been aligned with pygame button numbering,
             # so bit 1 = button 0, bit 2 = button 1, and so on
             set_bit = (1 << button)
