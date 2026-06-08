@@ -1,0 +1,4 @@
+node_modules/
+live-streaming/server/hls/
+.DS_Store
+*.log

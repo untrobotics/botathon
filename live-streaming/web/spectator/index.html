@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UNT Robotics Botathon - Live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="spectator.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+</head>
+<body>
+	<header>
+		<h1>UNT Robotics Botathon</h1>
+		<p class="subtitle">Live</p>
+		<div class="bar">
+			<label>Team: <input type="number" id="team" min="1" max="999" value="100"></label>
+			<button id="watch">Watch</button>
+		</div>
+	</header>
+
+	<main>
+		<video id="player" controls autoplay muted playsinline></video>
+		<p class="note">The public stream runs over HLS so it scales well, which means you'll be a few seconds behind the action. Drivers see the raw camera feed in real time.</p>
+	</main>
+
+	<script src="spectator.js"></script>
+</body>
+</html>

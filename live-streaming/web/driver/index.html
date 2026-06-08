@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Botathon Driver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="driver.css">
+</head>
+<body>
+	<header>
+		<h1>Botathon Driver</h1>
+		<div class="bar">
+			<label>Team: <input type="number" id="team" min="1" max="999" value="100"></label>
+			<button id="connect">Connect</button>
+			<span id="link-state" class="state state-down">disconnected</span>
+			<button id="flash" type="button" disabled>Flash</button>
+		</div>
+	</header>
+
+	<main>
+		<div class="video-wrap">
+			<img id="video" alt="camera feed">
+		</div>
+		<aside>
+			<h2>Telemetry</h2>
+			<pre id="telemetry-log">(none yet)</pre>
+			<h2>Controls</h2>
+			<p>Plug in a USB or Bluetooth controller and press any button to wake it up.</p>
+			<ul>
+				<li><strong>A</strong> - toggle forwards / backwards</li>
+				<li><strong>B</strong> - emergency stop</li>
+				<li><strong>Left bumper</strong> - left wheels</li>
+				<li><strong>Right bumper</strong> - right wheels</li>
+			</ul>
+		</aside>
+	</main>
+
+	<script src="driver.js"></script>
+</body>
+</html>
