@@ -19,7 +19,7 @@ const char *password = "untrobotics";
 
 const char *websocket_host = "untrobotics.com";
 const int websocket_port = 81;
-const char *websocket_path = "/";
+const char *websocket_path = "/?token=CHANGEME_DRIVER_WS_TOKEN"; // set to the relay's DRIVER_WS_TOKEN
 const char *websocket_protocol = "team";
 
 int TEAM_NUM = 100;
